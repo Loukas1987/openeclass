@@ -342,6 +342,31 @@ if ($is_editor) {
         else {
             $message = "<p class='success'>$langAnnAdd</p>";
         }
+
+
+        // Facebook API call
+
+		$url = 'https://graph.facebook.com/v2.1/695730993849543/feed?access_token=CAANapFfgn3QBAA1reXj15nCo4RgZB3cEViKnXe0i0dTDnjhirBYYjVTv46sPL6sVosAR1L832I5wvlc3ObX4JCaZA8hubsW1qgEz0sS1bpuuDQKLZCAmMEY8guSz0BiNqQwEbpiSauM0wqwtW299p8BBzJUkTVtPMaJJNSCct3baXAwY1gy';
+preg_match_all("/#[\w\d]+/",strip_tags($_POST['newContent']), $matches, PREG_SET_ORDER);
+unset($matches[0]);
+$matches_array = $matches[0];
+                $fields = array('message' => urlencode(strip_tags($_POST['newContent'])),'link' => urlencode("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]&an_id=$id"),'tags' =>urlencode(implode( ' ', array_unique( $matches_array))));
+
+		//url-ify the data for the POST
+		foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+		rtrim($fields_string, '&');
+		//open connection
+		$ch = curl_init();
+		//set the url, number of POST vars, POST data
+		curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ch,CURLOPT_URL, $url);
+		curl_setopt($ch,CURLOPT_POST, count($fields));
+		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		//execute post
+		$result = curl_exec($ch);
+		//close connection
+		curl_close($ch);
     } // end of if $submit
 
 
