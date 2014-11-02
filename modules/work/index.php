@@ -936,18 +936,31 @@ function new_assignment() {
         </tr> 
 <tr>
           <th>Supported file extensions:</th>
-          <td><input type='checkbox' id='auto_judge_C' name='auto_judge_C' class='file_extension' value='1' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_CPP' name='auto_judge_CPP' value='1' class='file_extension' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_CPP11' name='auto_judge_CPP11' value='1' class='file_extension' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_CLOJURE' name='auto_judge_CLOJURE' value='1' class='file_extension' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_CSHARP' name='auto_judge_CSHARP' value='1' class='file_extension' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_JAVA' name='auto_judge_JAVA' value='1' class='file_extension' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_JAVASCRIPT' name='auto_judge_JAVASCRIPT' class='file_extension' value='1' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_HASKELL' name='auto_judge_HASKELL' class='file_extension' value='1' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_PERL' name='auto_judge_PERL' class='file_extension' value='1' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_PHP' name='auto_judge_PHP'  class='file_extension' value='1'  checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_PYTHON' name='auto_judge_PYTHON' class='file_extension' value='1' checked='1' /></td>
-          <td><input type='checkbox' id='auto_judge_RUBY' name='auto_judge_RUBY' class='file_extension' value='1' checked='1' /></td>
+          <td>
+          <input type='checkbox' id='auto_judge_C' name='auto_judge_C' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_C'>C</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_CPP' name='auto_judge_CPP' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_CPP'>CPP</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_CPP11' name='auto_judge_CPP11' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_CPP11'>CPP11</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_CLOJURE' name='auto_judge_CLOJURE' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_CLOJURE'>CLOJURE</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_CSHARP' name='auto_judge_CSHARP' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_CSHARP'>CSHARP</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_JAVA' name='auto_judge_JAVA' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_JAVA'>JAVA</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_JAVASCRIPT' name='auto_judge_JAVASCRIPT' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_JAVASCRIPT'>JAVASCRIPT</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_HASKELL' name='auto_judge_HASKELL' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_HASKELL'>HASKELL</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_PERL' name='auto_judge_PERL' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_PERL'>PERL</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_PHP' name='auto_judge_PHP'  class='file_extension' value='1'  checked='1' />
+          <label for='auto_judge_PHP'>PHP</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_PYTHON' name='auto_judge_PYTHON' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_PYTHON'>PYTHON</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_RUBY' name='auto_judge_RUBY' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_RUBY'>RUBY</label>&nbsp;&nbsp;
 </tr>       
         <tr id='assignees_tbl' style='display:none;'>
           <th class='left' valign='top'></th>
