@@ -82,6 +82,24 @@ if ($is_editor) {
     global $themeimg, $m;
     $head_content .= "<link rel='stylesheet' type='text/css' href='{$urlAppend}js/jquery-ui-timepicker-addon.min.css'>
     <script type='text/javascript'>
+    
+    function check_languages(){
+        /* function to check if the admin chooses at least one supported file extension */
+        var file_extension = document.getElementsByClassName('file_extension');
+        var found = false;
+        for(i = 0; i < file_extension.length; i++){
+            if(file_extension[i].checked){
+                found = true;
+                break;
+            }
+        }
+        if(found)
+            return true;
+        else {
+            alert('You must choose at least one supported file extension!');
+            return false;
+        }
+    }
     $(function() {
         $('input[name=WorkEnd]').datetimepicker({
             showOn: 'both',
@@ -91,6 +109,8 @@ if ($is_editor) {
             timeFormat: 'HH:mm'
         });
         
+        
+
         $('input[name=group_submissions]').click(changeAssignLabel);
         $('input[id=assign_button_some]').click(ajaxAssignees);        
         $('input[id=assign_button_all]').click(hideAssignees);
@@ -311,6 +331,7 @@ function add_assignment() {
     $max_grade = filter_input(INPUT_POST, 'max_grade', FILTER_VALIDATE_FLOAT);
     $assign_to_specific = filter_input(INPUT_POST, 'assign_to_specific', FILTER_VALIDATE_INT);
     $assigned_to = filter_input(INPUT_POST, 'ingroup', FILTER_VALIDATE_INT, FILTER_REQUIRE_ARRAY);
+<<<<<<< HEAD
     $secret = uniqid('');
 	$auto_judge = filter_input(INPUT_POST, 'auto_judge', FILTER_VALIDATE_INT);
     if ($assign_to_specific == 1 && empty($assigned_to)) {
@@ -320,6 +341,33 @@ function add_assignment() {
         $id = Database::get()->query("INSERT INTO assignment (course_id, title, description, deadline, late_submission, comments, submission_date, secret_directory, group_submissions, max_grade, assign_to_specific, auto_judge) "
                 . "VALUES (?d, ?s, ?s, ?t, ?d, ?s, ?t, ?s, ?d, ?d, ?d, ?d)", $course_id, $title, $desc, $deadline, $late_submission, '', date("Y-m-d H:i:s"), $secret, $group_submissions, $max_grade, $assign_to_specific, $auto_judge)->lastInsertID;
         $secret = work_secret($id);
+=======
+    
+    // insert SUPPORTED EXTENSIONS BY HACKEREARTH into the database
+    
+    $auto_judge_C = filter_input(INPUT_POST, 'auto_judge_C', FILTER_VALIDATE_INT); 
+    $auto_judge_CPP = filter_input(INPUT_POST, 'auto_judge_CPP', FILTER_VALIDATE_INT); 
+    $auto_judge_CPP11 = filter_input(INPUT_POST, 'auto_judge_CPP11', FILTER_VALIDATE_INT); 
+    $auto_judge_CLOJURE = filter_input(INPUT_POST, 'auto_judge_CLOJURE', FILTER_VALIDATE_INT); 
+    $auto_judge_CSHARP = filter_input(INPUT_POST, 'auto_judge_CSHARP', FILTER_VALIDATE_INT); 
+    $auto_judge_JAVA = filter_input(INPUT_POST, 'auto_judge_JAVA', FILTER_VALIDATE_INT); 
+    $auto_judge_JAVASCRIPT = filter_input(INPUT_POST, 'auto_judge_JAVASCRIPT', FILTER_VALIDATE_INT); 
+    $auto_judge_HASKELL = filter_input(INPUT_POST, 'auto_judge_HASKELL', FILTER_VALIDATE_INT); 
+    $auto_judge_PERL = filter_input(INPUT_POST, 'auto_judge_PERL', FILTER_VALIDATE_INT); 
+    $auto_judge_PHP = filter_input(INPUT_POST, 'auto_judge_PHP', FILTER_VALIDATE_INT); 
+    $auto_judge_PYTHON = filter_input(INPUT_POST, 'auto_judge_PYTHON', FILTER_VALIDATE_INT); 
+    $auto_judge_RUBY = filter_input(INPUT_POST, 'auto_judge_RUBY', FILTER_VALIDATE_INT); 
+   
+$secret = uniqid('');
+
+    if ($assign_to_specific == 1 && empty($assigned_to)) {
+        $assign_to_specific = 0;
+    }
+   if (@mkdir("$workPath/$secret", 0777) && @mkdir("$workPath/admin_files/$secret", 0777, true)) {       
+        $id = Database::get()->query("INSERT INTO assignment (course_id, title, description, deadline, late_submission, comments, submission_date, secret_directory, group_submissions, max_grade, assign_to_specific,auto_judge_C,auto_judge_CPP,auto_judge_CPP11,auto_judge_CLOJURE,auto_judge_CSHARP,auto_judge_JAVA,auto_judge_JAVASCRIPT,auto_judge_HASKELL,auto_judge_PERL,auto_judge_PHP,auto_judge_PYTHON,auto_judge_RUBY) "
+                . "VALUES (?d, ?s, ?s, ?t, ?d, ?s, ?t, ?s, ?d, ?d, ?d, ?d, ?s)", $course_id, $title, $desc, $deadline, $late_submission, '', date("Y-m-d H:i:s"), $secret, $group_submissions, $max_grade, $assign_to_specific,$auto_judge_C,$auto_judge_CPP,$auto_judge_CPP11,$auto_judge_CLOJURE,$auto_judge_CSHARP,$auto_judge_JAVA,$auto_judge_JAVASCRIPT,$auto_judge_HASKELL,$auto_judge_PERL,$auto_judge_PHP,$auto_judge_PYTHON,$auto_judge_RUBY)->lastInsertID;
+       $secret = work_secret($id);
+>>>>>>> origin/gitbranch-Loukas1987-exerc4
         if ($id) {
             $local_name = uid_to_name($uid);
             $am = Database::get()->querySingle("SELECT am FROM user WHERE id = ?d", $uid)->am;
@@ -404,10 +452,27 @@ function submit_work($id, $on_behalf_of = null) {
         }
     } //checks for submission validity end here
     
-    $row = Database::get()->querySingle("SELECT title, group_submissions, auto_judge FROM assignment WHERE course_id = ?d AND id = ?d", $course_id, $id);
+    $row = Database::get()->querySingle("SELECT title, group_submissions, auto_judge_C,auto_judge_CPP,auto_judge_CPP11,auto_judge_CLOJURE,auto_judge_CSHARP,auto_judge_JAVA,auto_judge_JAVASCRIPT,auto_judge_HASKELL,auto_judge_PERL,auto_judge_PHP,auto_judge_PYTHON,auto_judge_RUBY FROM assignment WHERE course_id = ?d AND id = ?d", $course_id, $id);
     $title = q($row->title);
     $group_sub = $row->group_submissions;
+<<<<<<< HEAD
 	$auto_judge = $row->auto_judge;
+=======
+    
+$auto_judge_C = $row->auto_judge_C;
+$auto_judge_CPP = $row->auto_judge_CPP;
+$auto_judge_CP11 = $row->auto_judge_CPP11;
+$auto_judge_CLOJURE = $row->auto_judge_CLOJURE;
+$auto_judge_CSHARP = $row->auto_judge_CSHARP;
+$auto_judge_JAVA = $row->auto_judge_JAVA;
+$auto_judge_JAVASCRIPT = $row->auto_judge_JAVASCRIPT;
+$auto_judge_HASKELL = $row->auto_judge_HASKELL;
+$auto_judge_PERL = $row->auto_judge_PERL;
+$auto_judge_PHP = $row->auto_judge_PHP;
+$auto_judge_PYTHON = $row->auto_judge_PYTHON;
+$auto_judge_RUBY = $row->auto_judge_RUBY;
+
+>>>>>>> origin/gitbranch-Loukas1987-exerc4
     $nav[] = $works_url;
     $nav[] = array('url' => "$_SERVER[SCRIPT_NAME]?id=$id", 'name' => $title);
     if ($submit_ok) {
@@ -503,6 +568,7 @@ function submit_work($id, $on_behalf_of = null) {
         } else {
             $tool_content .= "<p class='caution'>$langUploadError<br /><a href='$_SERVER[SCRIPT_NAME]?course=$course_code'>$langBack</a></p><br />";
         }
+<<<<<<< HEAD
 		
 		//inspired by ΕΛΛΑΚ 528
 
@@ -555,6 +621,312 @@ function submit_work($id, $on_behalf_of = null) {
 		// End Auto-judge
 		}
 		
+=======
+
+// Auto-judge for .c file extension: Send file to hackearth
+if($auto_judge_C) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'C');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_c
+
+// Auto-judge for .cpp file extension: Send file to hackearth
+
+if($auto_judge_CPP) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'CPP');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_cpp
+
+// Auto-judge for .cpp11 file extension: Send file to hackearth
+if($auto_judge_CPP11) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'CPP11');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_cpp11
+// Auto-judge for .clojure file extension: Send file to hackearth
+if($auto_judge_CLOJURE) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'CLOJURE');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_CLOJURE
+// Auto-judge for CSHARP file extension: Send file to hackearth
+if($auto_judge_CSHARP) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'CSHARP');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_CSHARP
+// Auto-judge for JAVA file extension: Send file to hackearth
+if($auto_judge_JAVA) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'JAVA');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_JAVA
+// Auto-judge for JAVASCRIPT file extension: Send file to hackearth
+if($auto_judge_JAVASCRIPT) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'JAVASCRIPT');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_JAVASCRIPT
+// Auto-judge for HASKELL file extension: Send file to hackearth
+if($auto_judge_HASKELL) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'HASKELL');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_HASKELL
+// Auto-judge for PERL file extension: Send file to hackearth
+if($auto_judge_PERL) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'PERL');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_PERL
+// Auto-judge for PHP file extension: Send file to hackearth
+if($auto_judge_PHP) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'PHP');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_PHP
+// Auto-judge for PYTHON file extension: Send file to hackearth
+if($auto_judge_PYTHON) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'PYTHON');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge_PYTHON
+// Auto-judge for RUBY file extension: Send file to hackearth
+if($auto_judge_RUBY) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => 'RUBY');
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-jUDGE_RUBY
+>>>>>>> origin/gitbranch-Loukas1987-exerc4
     } else { // not submit_ok
         $tool_content .="<p class='caution'>$langExerciseNotPermit<br /><a href='$_SERVER[SCRIPT_NAME]?course=$course_code'>$langBack</a></p></br>";
     }
@@ -571,7 +943,7 @@ function new_assignment() {
                         </ul></div>";
     
     $tool_content .= "
-        <form enctype='multipart/form-data' action='$_SERVER[SCRIPT_NAME]?course=$course_code' method='post'>
+        <form enctype='multipart/form-data' action='$_SERVER[SCRIPT_NAME]?course=$course_code' method='post' onsubmit='return check_languages()'>
         <fieldset>
         <legend>$m[WorkInfo]</legend>
         <table class='tbl' width='100%'>    
@@ -612,6 +984,7 @@ function new_assignment() {
 		  <th>$m[WorkAssignTo]:</th>
           <td><input type='radio' id='assign_button_all' name='assign_to_specific' value='0' checked='1' /><label for='assign_button_all'>Όλους</label>
           <br /><input type='radio' id='assign_button_some' name='assign_to_specific' value='1' /><label for='assign_button_some'>$m[WorkToUser]</label></td>
+<<<<<<< HEAD
         </tr>   
 		<tr>
           <th>Auto-judge:</th>
@@ -639,6 +1012,37 @@ function new_assignment() {
 		  </td>
 		</tr>		  
 				
+=======
+        </tr> 
+<tr>
+          <th>Supported file extensions:</th>
+          <td>
+          <input type='checkbox' id='auto_judge_C' name='auto_judge_C' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_C'>C</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_CPP' name='auto_judge_CPP' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_CPP'>CPP</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_CPP11' name='auto_judge_CPP11' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_CPP11'>CPP11</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_CLOJURE' name='auto_judge_CLOJURE' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_CLOJURE'>CLOJURE</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_CSHARP' name='auto_judge_CSHARP' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_CSHARP'>CSHARP</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_JAVA' name='auto_judge_JAVA' value='1' class='file_extension' checked='1' />
+          <label for='auto_judge_JAVA'>JAVA</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_JAVASCRIPT' name='auto_judge_JAVASCRIPT' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_JAVASCRIPT'>JAVASCRIPT</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_HASKELL' name='auto_judge_HASKELL' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_HASKELL'>HASKELL</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_PERL' name='auto_judge_PERL' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_PERL'>PERL</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_PHP' name='auto_judge_PHP'  class='file_extension' value='1'  checked='1' />
+          <label for='auto_judge_PHP'>PHP</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_PYTHON' name='auto_judge_PYTHON' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_PYTHON'>PYTHON</label>&nbsp;&nbsp;
+          <input type='checkbox' id='auto_judge_RUBY' name='auto_judge_RUBY' class='file_extension' value='1' checked='1' />
+          <label for='auto_judge_RUBY'>RUBY</label>&nbsp;&nbsp;
+</tr>       
+>>>>>>> origin/gitbranch-Loukas1987-exerc4
         <tr id='assignees_tbl' style='display:none;'>
           <th class='left' valign='top'></th>
           <td>
