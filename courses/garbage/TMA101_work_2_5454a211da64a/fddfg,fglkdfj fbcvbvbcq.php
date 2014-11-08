@@ -1,4 +1,5 @@
 ﻿<?php
+
 /* ========================================================================
  * Open eClass 3.0
  * E-learning and Course Management System
@@ -17,14 +18,17 @@
  *                  Panepistimiopolis Ilissia, 15784, Athens, Greece
  *                  e-mail: info@openeclass.org
  * ========================================================================
+
   ============================================================================
   @Description: Main script for the work tool
   ============================================================================
  */
+
 $require_current_course = true;
 $require_login = true;
 $require_help = true;
 $helpTopic = 'Work';
+
 require_once '../../include/baseTheme.php';
 require_once 'include/lib/forcedownload.php';
 require_once 'work_functions.php';
@@ -34,6 +38,7 @@ require_once 'include/lib/fileManageLib.inc.php';
 require_once 'include/sendMail.inc.php';
 require_once 'modules/graphics/plotter.php';
 require_once 'include/log.php';
+
 // For colorbox, fancybox, shadowbox use
 require_once 'include/lib/modalboxhelper.class.php';
 require_once 'include/lib/multimediahelper.class.php';
@@ -43,12 +48,16 @@ require_once 'include/action.php';
 $action = new action();
 $action->record(MODULE_ID_ASSIGN);
 /* * *********************************** */
+
+
 $workPath = $webDir . "/courses/" . $course_code . "/work";
 $works_url = array('url' => "$_SERVER[SCRIPT_NAME]?course=$course_code", 'name' => $langWorks);
 $nameTools = $langWorks;
+
 //-------------------------------------------
 // main program
 //-------------------------------------------
+
 //Gets the student's assignment file ($file_type=NULL) 
 //or the teacher's assignment ($file_type=1)
 if (isset($_GET['get'])) {
@@ -61,6 +70,7 @@ if (isset($_GET['get'])) {
         Session::Messages($langFileNotFound, 'caution');
     }
 }
+
 // Only course admins can download all assignments in a zip file
 if ($is_editor) {    
     if (isset($_GET['download'])) {
@@ -74,6 +84,7 @@ if ($is_editor) {
         }
     }
 }
+
 if ($is_editor) {
     load_js('tools.js');
     load_js('jquery');
@@ -141,6 +152,7 @@ if ($is_editor) {
     });
     
     </script>";    
+
     $email_notify = (isset($_POST['email']) && $_POST['email']);
     if (isset($_POST['grade_comments'])) {
         $work_title = Database::get()->querySingle("SELECT title FROM assignment WHERE id = ?d", intval($_POST['assignment']))->title;
@@ -294,11 +306,14 @@ if ($is_editor) {
         show_student_assignments();
     }
 }
+
 add_units_navigation(TRUE);
 draw($tool_content, 2, null, $head_content);
+
 //-------------------------------------
 // end of main program
 //-------------------------------------
+
 // insert the assignment into the database
 function add_assignment() {
     global $tool_content, $workPath, $course_id, $uid;
@@ -311,14 +326,15 @@ function add_assignment() {
     $max_grade = filter_input(INPUT_POST, 'max_grade', FILTER_VALIDATE_FLOAT);
     $assign_to_specific = filter_input(INPUT_POST, 'assign_to_specific', FILTER_VALIDATE_INT);
     $assigned_to = filter_input(INPUT_POST, 'ingroup', FILTER_VALIDATE_INT, FILTER_REQUIRE_ARRAY);
-    $secret = uniqid('');
-	$auto_judge = filter_input(INPUT_POST, 'auto_judge', FILTER_VALIDATE_INT);
+$auto_judge = filter_input(INPUT_POST, 'auto_judge', FILTER_VALIDATE_INT);    
+$secret = uniqid('');
+
     if ($assign_to_specific == 1 && empty($assigned_to)) {
         $assign_to_specific = 0;
     }
     if (@mkdir("$workPath/$secret", 0777) && @mkdir("$workPath/admin_files/$secret", 0777, true)) {       
-        $id = Database::get()->query("INSERT INTO assignment (course_id, title, description, deadline, late_submission, comments, submission_date, secret_directory, group_submissions, max_grade, assign_to_specific, auto_judge) "
-                . "VALUES (?d, ?s, ?s, ?t, ?d, ?s, ?t, ?s, ?d, ?d, ?d, ?d)", $course_id, $title, $desc, $deadline, $late_submission, '', date("Y-m-d H:i:s"), $secret, $group_submissions, $max_grade, $assign_to_specific, $auto_judge)->lastInsertID;
+        $id = Database::get()->query("INSERT INTO assignment (course_id, title, description, deadline, late_submission, comments, submission_date, secret_directory, group_submissions, max_grade, assign_to_specific) "
+                . "VALUES (?d, ?s, ?s, ?t, ?d, ?s, ?t, ?s, ?d, ?d, ?d)", $course_id, $title, $desc, $deadline, $late_submission, '', date("Y-m-d H:i:s"), $secret, $group_submissions, $max_grade, $assign_to_specific,auto_judge)->lastInsertID;
         $secret = work_secret($id);
         if ($id) {
             $local_name = uid_to_name($uid);
@@ -373,11 +389,13 @@ function add_assignment() {
        return false;
     }
 }
+
 function submit_work($id, $on_behalf_of = null) {
     global $tool_content, $workPath, $uid, $course_id, $works_url,
     $langUploadSuccess, $langBack, $langUploadError,
     $langExerciseNotPermit, $langUnwantedFiletype, $course_code,
     $langOnBehalfOfUserComment, $langOnBehalfOfGroupComment, $course_id;
+
     if (isset($on_behalf_of)) {
         $user_id = $on_behalf_of;
     } else {
@@ -407,9 +425,10 @@ function submit_work($id, $on_behalf_of = null) {
     $row = Database::get()->querySingle("SELECT title, group_submissions, auto_judge FROM assignment WHERE course_id = ?d AND id = ?d", $course_id, $id);
     $title = q($row->title);
     $group_sub = $row->group_submissions;
-	$auto_judge = $row->auto_judge;
+$auto_judge = $row->auto_judge;
     $nav[] = $works_url;
     $nav[] = array('url' => "$_SERVER[SCRIPT_NAME]?id=$id", 'name' => $title);
+
     if ($submit_ok) {
         if ($group_sub) {
             $group_id = isset($_POST['group_id']) ? intval($_POST['group_id']) : -1;
@@ -433,7 +452,9 @@ function submit_work($id, $on_behalf_of = null) {
         } else {
             $no_files = false;
         }
+
         validateUploadedFile($_FILES['userfile']['name'], 2);
+
         if (preg_match('/\.(ade|adp|bas|bat|chm|cmd|com|cpl|crt|exe|hlp|hta|' . 'inf|ins|isp|jse|lnk|mdb|mde|msc|msi|msp|mst|pcd|pif|reg|scr|sct|shs|' . 'shb|url|vbe|vbs|wsc|wsf|wsh)$/', $_FILES['userfile']['name'])) {
             $tool_content .= "<p class=\"caution\">$langUnwantedFiletype: {$_FILES['userfile']['name']}<br />";
             $tool_content .= "<a href=\"$_SERVER[SCRIPT_NAME]?course=$course_code&amp;id=$id\">$langBack</a></p><br />";
@@ -503,62 +524,51 @@ function submit_work($id, $on_behalf_of = null) {
         } else {
             $tool_content .= "<p class='caution'>$langUploadError<br /><a href='$_SERVER[SCRIPT_NAME]?course=$course_code'>$langBack</a></p><br />";
         }
-		
-		//inspired by ΕΛΛΑΚ 528
 
-		if($auto_judge){
-		// Auto-judge: Send file to hackearth
-		global $hackerEarthKey;
-		$content = file_get_contents("$workPath/$filename");
-		//εύρεση της επέκτασης του υποβαλλόμενου αρχείου
-		$dot=strrpos($file_name, '.');
-		$extension=substr($file_name, $dot+1);
-		$valid_extensions=array("c", "cpp", "chh", "clj", "cs", "java", "js", "hs", "pl", "php", "py", "rb");	//valid extensions
-		$check_extension=in_array($extension, $valid_extensions);	//check if uploaded file is one of the valid extensions 
-		if (($check_extension==TRUE)&&($extension===$_POST['valid_extension']))
-		{
-		$pos_extension=array_search($extension, $valid_extensions);
-		}
-		$valid_langs=array("C", "CPP", "CPP11", "CLOJURE", "CSHARP", "JAVA", "JAVASCRIPT", "HASKELL", "PERL", "PHP", "PYTHON", "RUBY");	//correspondant languages
+// Auto-judge: Send file to hackearth
+if($auto_judge) {
+global $hackerEarthKey;
+$content = file_get_contents("$workPath/$filename");
+$extension_of_file = pathinfo("$workPath/$filename", PATHINFO_EXTENSION);
 
-		
-		//set POST variables
-		$fields_string = null;
-		$url = 'http://api.hackerearth.com/code/run/';
-		$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => $valid_langs[$pos_extension]);
-		//url-ify the data for the POST
-		foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
-		rtrim($fields_string, '&');
-		//open connection
-		$ch = curl_init();
-		//set the url, number of POST vars, POST data
-		curl_setopt($ch,CURLOPT_URL, $url);
-		curl_setopt($ch,CURLOPT_POST, count($fields));
-		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-		//execute post
-		$result = curl_exec($ch);
-		$result = json_decode($result, true);
-		$result['run_status']['output'] = trim($result['run_status']['output']);
+//set POST variables
+$url = 'http://api.hackerearth.com/code/run/';
 
+// 
 
-		// Add the output as a comment
+ $right_types_of_lang = array('.c'=>'C','.cpp'=>'CPP','.cpp11'=>'CPP11','.clj'=>'CLOJURE','.cs'=>'CSHARP','.java'=>'JAVA','.js'=>'JAVASCRIPT','.hs'=>'HASKELL','.pm'=>'PERL','.php'=>'PHP', '.py'=>'PYTHON','.rb'=>'RUBY'); //supported file extensions by Hackerearth 
+           
+foreach($right_types_of_lang as $File_Extension=>$Language_File_Extension){
+                if ($extension_of_file==$File_Extension){
+                    $langvalue=$Language_File_Extension;
+                }
+            }
 
-		if ($check_extension==FALSE){	//not valid or not selected file extension
-		submit_grade_comments($id, $sid, 0, 'Not valid file.'.$result['run_status'][' '], false); 
-		}
+$fields = array('client_secret' => $hackerEarthKey, 'source' => $content, 'lang' => $right_types_of_lang);
+//url-ify the data for the POST
+foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+rtrim($fields_string, '&');
+//open connection
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch,CURLOPT_URL, $url);
+curl_setopt($ch,CURLOPT_POST, count($fields));
+curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//execute post
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+$result['run_status']['output'] = trim($result['run_status']['output']);
+// Add the output as a comment
+submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
+}
+// End Auto-judge
 
-		else {
-		submit_grade_comments($id, $sid, 10, 'Output: '.$result['run_status']['output'], false);
-		}
-
-		// End Auto-judge
-		}
-		
     } else { // not submit_ok
         $tool_content .="<p class='caution'>$langExerciseNotPermit<br /><a href='$_SERVER[SCRIPT_NAME]?course=$course_code'>$langBack</a></p></br>";
     }
 }
+
 //  assignment - prof view only
 function new_assignment() {
     global $tool_content, $m, $langAdd, $course_code, $course_id;
@@ -607,39 +617,50 @@ function new_assignment() {
           <td><input type='radio' id='user_button' name='group_submissions' value='0' checked='1' /><label for='user_button'>$m[user_work]</label>
           <br /><input type='radio' id='group_button' name='group_submissions' value='1' /><label for='group_button'>$m[group_work]</label></td>
         </tr>
-		
         <tr>
-		  <th>$m[WorkAssignTo]:</th>
+          <th>$m[WorkAssignTo]:</th>
           <td><input type='radio' id='assign_button_all' name='assign_to_specific' value='0' checked='1' /><label for='assign_button_all'>Όλους</label>
           <br /><input type='radio' id='assign_button_some' name='assign_to_specific' value='1' /><label for='assign_button_some'>$m[WorkToUser]</label></td>
-        </tr>   
-		<tr>
+        </tr> 
+<tr>
           <th>Auto-judge:</th>
           <td><input type='checkbox' id='auto_judge' name='auto_judge' value='1' checked='1' /></td>
-		</tr>
-		<tr>
-			<th>Επιτρεπόμενες γλώσσες:</th>
-		</tr>
-		<tr>
-          <td>
-		  <select name='valid_extension' size=12 multiple>		
-			<option value='c'>C</option>
-			<option value='cpp'>C++</option>
-			<option value='chh'>C++11</option>
-			<option value='clj'>Clojure</option>
-			<option value='cs'>C#</option>
-			<option value='java'>Java</option>
-			<option value='js'>JavaScript</option>
-			<option value='hs'>Haskel</option>
-			<option value='pl'>Perl</option>
-			<option value='php'>PHP</option>
-			<option value='py' selected='selected'><strong>Python</strong></option>
-			<option value='rb'>Ruby</option>
-			</select> 
-		  </td>
-		</tr>		  
-				
-        <tr id='assignees_tbl' style='display:none;'>
+</tr>       
+       
+            
+<tr>
+          <th>Supported Languages:</th>
+          <td><table width='99%' align='center' class='tbl_white' text-align='center'>
+ 
+             <tr>
+                <th>C</th>
+               <td><input type='checkbox' id='c_lang' name='c_lang' value='C' checked='1' /></td>
+               <th>CPP</th>
+               <td><input type='checkbox' id='c++_lang' name='c++_lang' value='CPP' checked='1' /></td>
+               <th>CPP11</th>
+               <td><input type='checkbox' id='c++11_lang' name='c++11_lang' value='CPP11' checked='1' /></td>
+                 <th>Clojure</th>
+               <td><input type='checkbox' id='c_lojure' name='c_lojure' value='CLOJURE' checked='1' /></td>
+               <th>Csharp</th>
+               <td><input type='checkbox' id='c_sharp' name='c_sharp' value='CSHARP' checked='1' /></td>
+             <th>Java</th>
+              <td><input type='checkbox' id='java_lang' name='java_lang' value='JAVA' checked='1' /></td></tr>
+                 <tr><th>Javascript</th>
+               <td><input type='checkbox' id='js_lang' name='js_lang' value='JAVASCRIPT' checked='1' /></td>
+               <th>Haskell</th>
+               <td><input type='checkbox' id='haskell_lang' name='haskell_lang' value='HASKELL' checked='1' /></td>
+              <th>Perl</th>
+               <td><input type='checkbox' id='perl_lang' name='perl_lang' value='PERL' checked='1' /></td>              
+                <th>Php</th>
+               <td><input type='checkbox' id='php_lang' name='php_lang' value='PHP' checked='1' /></td>
+                <th>Python</th>
+               <td><input type='checkbox' id='python_lang' name='python_lang' value='PYTHON' checked='1' /></td>
+               <th>Ruby</th>
+               <td><input type='checkbox' id='ruby_lang' name='ruby_lang' value='RUBY' checked='1' /></td></tr>
+             </tr>
+          </table></td>
+        </tr>
+<tr id='assignees_tbl' style='display:none;'>
           <th class='left' valign='top'></th>
           <td>
               <table width='99%' align='center' class='tbl_white'>
@@ -651,13 +672,17 @@ function new_assignment() {
               <tr>
                 <td>
                   <select id='assign_box' size='15' style='width:180px' multiple>
+
                   </select>
                 </td>
+
+         
                 <td class='center'>
                   <input type='button' onClick=\"move('assign_box','assignee_box')\" value='   &gt;&gt;   ' /><br /><input type='button' onClick=\"move('assignee_box','assign_box')\" value='   &lt;&lt;   ' />
                 </td>
                 <td class='right'>
                   <select id='assignee_box' name='ingroup[]' size='15' style='width:180px' multiple>
+
                   </select>
                 </td>
               </tr>
@@ -672,12 +697,14 @@ function new_assignment() {
         </fieldset>
         </form>";    
 }
+
 //form for editing
 function show_edit_assignment($id) {
     
     global $tool_content, $m, $langEdit, $langBack, $course_code,
     $urlAppend, $works_url, $course_id, 
     $langStudents, $langMove, $langWorkFile, $themeimg;
+
     $row = Database::get()->querySingle("SELECT * FROM assignment WHERE id = ?d", $id);
     if ($row->assign_to_specific) {
         //preparing options in select boxes for assigning to speficic users/groups
@@ -827,10 +854,13 @@ function show_edit_assignment($id) {
     </fieldset>
     </form>";
 }
+
 // edit assignment
 function edit_assignment($id) {
+
     global $tool_content, $langBackAssignment, $langEditSuccess,
     $langEditError, $course_code, $works_url, $course_id, $uid, $workPath;
+
     $row = Database::get()->querySingle("SELECT * FROM assignment WHERE id = ?d", $id);
     $title = $_POST['title'];
     $desc = purify($_POST['desc']);
@@ -844,6 +874,7 @@ function edit_assignment($id) {
     if ($assign_to_specific == 1 && empty($assigned_to)) {
         $assign_to_specific = 0;
     }
+
     if (!isset($_POST['comments'])) {
         $comments = '';
     } else {
@@ -884,7 +915,9 @@ function edit_assignment($id) {
         assign_to_specific = ?d, file_path = ?s, file_name = ?s
         WHERE course_id = ?d AND id = ?d", $title, $desc, $group_submissions, 
         $comments, $deadline, $late_submission, $max_grade, $assign_to_specific, $filename, $file_name, $course_id, $id);
+
     Database::get()->query("DELETE FROM assignment_to_specific WHERE assignment_id = ?d", $id);
+
     if ($assign_to_specific && !empty($assigned_to)) {
         if ($group_submissions == 1) {
             $column = 'group_id';
@@ -904,6 +937,7 @@ function edit_assignment($id) {
             'group' => $group_submissions));
     return true;
 }
+
 /**
  * @brief delete assignment
  * @global type $tool_content
@@ -916,7 +950,9 @@ function edit_assignment($id) {
  * @param type $id
  */
 function delete_assignment($id) {
+
     global $tool_content, $workPath, $course_code, $webDir, $langBack, $langDeleted, $course_id;
+
     $secret = work_secret($id);
     $row = Database::get()->querySingle("SELECT title,assign_to_specific FROM assignment WHERE course_id = ?d
                                         AND id = ?d", $course_id, $id);
@@ -927,6 +963,7 @@ function delete_assignment($id) {
                 Database::get()->query("DELETE FROM assignment_to_specific WHERE assignment_id = ?d", $id);
             }
             move_dir("$workPath/$secret", "$webDir/courses/garbage/${course_code}_work_${id}_$secret");
+
             Log::record($course_id, MODULE_ID_ASSIGN, LOG_DELETE, array('id' => $id,
                 'title' => $row->title));
             return true;
@@ -947,6 +984,7 @@ function delete_assignment($id) {
  * @param type $id
  */
 function purge_assignment_subs($id) {
+
 	global $tool_content, $workPath, $webDir, $langBack, $langDeleted, $langAssignmentSubsDeleted, $course_code, $course_id;
         
 	$secret = work_secret($id);
@@ -972,6 +1010,7 @@ function purge_assignment_subs($id) {
  */
 function delete_user_assignment($id) {
     global $tool_content, $course_code, $webDir;
+
     $filename = Database::get()->querySingle("SELECT file_path FROM assignment_submit WHERE id = ?d", $id);
     $file = $webDir . "/courses/" . $course_code . "/work/" . $filename->file_path;
     if (Database::get()->query("DELETE FROM assignment_submit WHERE id = ?d", $id)->affectedRows > 0) {
@@ -991,6 +1030,7 @@ function delete_user_assignment($id) {
  */
 function delete_teacher_assignment_file($id) {
     global $tool_content, $course_code, $webDir;
+
     $filename = Database::get()->querySingle("SELECT file_path FROM assignment WHERE id = ?d", $id);
     $file = $webDir . "/courses/" . $course_code . "/work/admin_files/" . $filename->file_path;
     if (Database::get()->query("UPDATE assignment SET file_path='', file_name='' WHERE id = ?d", $id)->affectedRows > 0) {
@@ -1015,11 +1055,15 @@ function delete_teacher_assignment_file($id) {
 function show_student_assignment($id) {
     global $tool_content, $m, $uid, $langUserOnly, $langBack,
     $course_code, $course_id, $course_code;
+
     $user_group_info = user_group_info($uid, $course_id);
     $row = Database::get()->querySingle("SELECT *, CAST(UNIX_TIMESTAMP(deadline)-UNIX_TIMESTAMP(NOW()) AS SIGNED) AS time
                                          FROM assignment WHERE course_id = ?d AND id = ?d", $course_id, $id);
+
     assignment_details($id, $row);
+
     $submit_ok = ($row->time > 0 || !(int) $row->deadline || $row->time <= 0 && $row->late_submission);
+
     if (!$uid) {
         $tool_content .= "<p>$langUserOnly</p>";
         $submit_ok = FALSE;
@@ -1040,9 +1084,11 @@ function show_student_assignment($id) {
     }
     $tool_content .= "<br/><p align='right'><a href='$_SERVER[SCRIPT_NAME]?course=$course_code'>$langBack</a></p>";
 }
+
 function show_submission_form($id, $user_group_info, $on_behalf_of = false) {
     global $tool_content, $m, $langWorkFile, $langSendFile, $langSubmit, $uid, $langNotice3, $gid, $is_member,
     $urlAppend, $langGroupSpaceLink, $langOnBehalfOf, $course_code;
+
     $group_select_hidden_input = $group_select_form = '';
     $is_group_assignment = is_group_assignment($id);
     if ($is_group_assignment) {
@@ -1116,12 +1162,14 @@ function show_submission_form($id, $user_group_info, $on_behalf_of = false) {
                 ini_get('upload_max_filesize') . "</small></p>";
     }
 }
+
 // Print a box with the details of an assignment
 function assignment_details($id, $row) {
     global $tool_content, $is_editor, $course_code, $themeimg, $m, $langDaysLeft,
     $langDays, $langWEndDeadline, $langNEndDeadLine, $langNEndDeadline,
     $langEndDeadline, $langDelAssign, $langAddGrade, $langZipDownload,
     $langSaved, $langGraphResults, $langConfirmDelete, $langWorkFile;
+
     if ($is_editor) {
         $tool_content .= "
             <div id='operations_container'>
@@ -1134,6 +1182,7 @@ function assignment_details($id, $row) {
               </ul>
             </div>";
     }
+
     $tool_content .= "
         <fieldset>
         <legend>" . $m['WorkInfo'];
@@ -1185,6 +1234,7 @@ function assignment_details($id, $row) {
         <tr>
           <th valign='top'>$m[deadline]:</th>
           <td>" . $deadline . " <br />";
+
     if ($row->time > 0) {
         $tool_content .= "<span>($langDaysLeft " . format_time_duration($row->time) . ")</span></td>
                 </tr>";
@@ -1207,6 +1257,7 @@ function assignment_details($id, $row) {
         </table>
         </fieldset>";
 }
+
 // Show a table header which is a link with the appropriate sorting
 // parameters - $attrib should contain any extra attributes requered in
 // the <th> tags
@@ -1229,6 +1280,7 @@ function sort_link($title, $opt, $attrib = '') {
                   <th $attrib><a href='$_SERVER[SCRIPT_NAME]?course=$course_code&amp;sort=$opt$i'>$title</a></th>";
     }
 }
+
 // show assignment - prof view only
 // the optional message appears instead of assignment details
 function show_assignment($id, $display_graph_results = false) {
@@ -1236,9 +1288,11 @@ function show_assignment($id, $display_graph_results = false) {
     $langEndDeadline, $langWEndDeadline, $langNEndDeadline,
     $langDays, $langDaysLeft, $langGradeOk, $course_code, $webDir, $urlServer,
     $langGraphResults, $m, $course_code, $themeimg, $works_url, $course_id, $langDelWarnUserAssignment;
+
     $row = Database::get()->querySingle("SELECT *, CAST(UNIX_TIMESTAMP(deadline)-UNIX_TIMESTAMP(NOW()) AS SIGNED) AS time
                                 FROM assignment
                                 WHERE course_id = ?d AND id = ?d", $course_id, $id);
+
     $nav[] = $works_url;
     assignment_details($id, $row);
     
@@ -1258,9 +1312,11 @@ function show_assignment($id, $display_graph_results = false) {
     } else {
         $order = 'surname';
     }
+
     $result = Database::get()->queryArray("SELECT * FROM assignment_submit AS assign, user
                                  WHERE assign.assignment_id = ?d AND user.id = assign.uid
                                  ORDER BY ?s ?s", $id, $order, $rev);
+
     $num_results = count($result);
     if ($num_results > 0) {
         if ($num_results == 1) {
@@ -1268,6 +1324,7 @@ function show_assignment($id, $display_graph_results = false) {
         } else {
             $num_of_submissions = sprintf("$m[more_submissions]", $num_results);
         }
+
         $gradeOccurances = array(); // Named array to hold grade occurances/stats
         $gradesExists = 0;
         foreach ($result as $row) {
@@ -1294,6 +1351,7 @@ function show_assignment($id, $display_graph_results = false) {
                                                    FROM assignment_submit AS assign, user, assignment
                                                    WHERE assign.assignment_id = ?d AND assign.assignment_id = assignment.id AND user.id = assign.uid
                                                    ORDER BY ?s ?s", $id, $order, $rev);
+
             $tool_content .= "
                         <form action='$_SERVER[SCRIPT_NAME]?course=$course_code' method='post'>
                         <input type='hidden' name='grades_id' value='$id' />
@@ -1308,6 +1366,7 @@ function show_assignment($id, $display_graph_results = false) {
             sort_link($m['sub_date'], 'date');
             sort_link($m['grade'], 'grade');
             $tool_content .= "</tr>";
+
             $i = 1;
             foreach ($result as $row) {
                 //is it a group assignment?
@@ -1374,6 +1433,7 @@ function show_assignment($id, $display_graph_results = false) {
                                 </tr>";
                 $i++;
             } //END of Foreach
+
             $tool_content .= "</table>
                         <p class='smaller right'><img src='$themeimg/email.png' alt='' >
                                 $m[email_users]: <input type='checkbox' value='1' name='email'></p>
@@ -1403,12 +1463,14 @@ function show_assignment($id, $display_graph_results = false) {
     $tool_content .= "<br/>
                 <p align='right'><a href='$_SERVER[SCRIPT_NAME]?course=$course_code'>$langBack</a></p>";
 }
+
 function show_non_submitted($id) {
     global $tool_content, $works_url, $course_id, $m, $langSubmissions,
             $langGroup, $course_code;    
     $row = Database::get()->querySingle("SELECT *, CAST(UNIX_TIMESTAMP(deadline)-UNIX_TIMESTAMP(NOW()) AS SIGNED) AS time
                                 FROM assignment
                                 WHERE course_id = ?d AND id = ?d", $course_id, $id);
+
     $nav[] = $works_url;
     assignment_details($id, $row);
     if ($row->group_submissions) {
@@ -1494,12 +1556,14 @@ function show_student_assignments() {
     global $tool_content, $m, $uid, $course_id, $course_code,
     $langDaysLeft, $langDays, $langNoAssign, $urlServer,
     $course_code, $themeimg;
+
     $gids = user_group_info($uid, $course_id);
     if (!empty($gids)) {
         $gids_sql_ready = implode(',',array_keys($gids));
     } else {
         $gids_sql_ready = "''";
     }
+
     $result = Database::get()->queryArray("SELECT *, CAST(UNIX_TIMESTAMP(deadline)-UNIX_TIMESTAMP(NOW()) AS SIGNED) AS time
                                  FROM assignment WHERE course_id = ?d AND active = 1 AND 
                                  (assign_to_specific = 0 OR assign_to_specific = 1 AND id IN
@@ -1536,6 +1600,7 @@ function show_student_assignments() {
                 $tool_content .= " (<span class='expired'>$m[expired]</span>)";
             }
             $tool_content .= "</td><td width='170' align='center'>";
+
             if ($submission = find_submissions(is_group_assignment($row->id), $uid, $row->id, $gids)) {
                 foreach ($submission as $sub) {
                     if (isset($sub->group_id)) { // if is a group assignment
@@ -1567,12 +1632,14 @@ function show_student_assignments() {
         $tool_content .= "<p class='alert1'>$langNoAssign</p>";
     }
 }
+
 // show all the assignments
 function show_assignments() {
     global $tool_content, $m, $langNoAssign, $langNewAssign, $langCommands,
     $course_code, $themeimg, $course_id, $langConfirmDelete, $langDaysLeft, $m,
     $langWarnForSubmissions, $langDelSure;
     
+
     $result = Database::get()->queryArray("SELECT *, CAST(UNIX_TIMESTAMP(deadline)-UNIX_TIMESTAMP(NOW()) AS SIGNED) AS time
               FROM assignment WHERE course_id = ?d ORDER BY CASE WHEN CAST(deadline AS UNSIGNED) = '0' THEN 1 ELSE 0 END, deadline", $course_id);
  
@@ -1582,6 +1649,7 @@ function show_assignments() {
                 <li><a href='$_SERVER[SCRIPT_NAME]?course=$course_code&amp;add=1'>$langNewAssign</a></li>
               </ul>
             </div>";
+
     if (count($result)>0) {
         $tool_content .= "
                     <table width='100%' class='tbl_alt'>
@@ -1623,6 +1691,7 @@ function show_assignments() {
                               <a href='$_SERVER[SCRIPT_NAME]?course=$course_code&amp;id={$row->id}'";
             $tool_content .= ">";
             $tool_content .= q($row->title);
+
             $tool_content .= "</a></td>
 			  <td class='center'>$num_submitted</td>
 			  <td class='center'>$num_ungraded</td>
@@ -1662,9 +1731,11 @@ function show_assignments() {
         $tool_content .= "\n<p class='alert1'>$langNoAssign</p>";        
     }
 }
+
 // submit grade and comment for a student submission
 function submit_grade_comments($id, $sid, $grade, $comment, $email) {
     global $tool_content, $langGrades, $langWorkWrongInput, $course_id;
+
     $grade_valid = filter_var($grade, FILTER_VALIDATE_FLOAT);
     (isset($grade) && $grade_valid!== false) ? $grade = $grade_valid : $grade = NULL;
         
@@ -1686,9 +1757,11 @@ function submit_grade_comments($id, $sid, $grade, $comment, $email) {
     }    
     show_assignment($id);
 }
+
 // submit grades to students
 function submit_grades($grades_id, $grades, $email = false) {
     global $tool_content, $langGrades, $langWorkWrongInput, $course_id;
+
     foreach ($grades as $sid => $grade) {
         $sid = intval($sid);
         $val = Database::get()->querySingle("SELECT grade from assignment_submit WHERE id = ?d", $sid)->grade;
@@ -1712,6 +1785,7 @@ function submit_grades($grades_id, $grades, $email = false) {
     }
     show_assignment($grades_id);
 }
+
 // functions for downloading
 function send_file($id, $file_type) {
     global $course_code, $uid, $is_editor;
@@ -1739,6 +1813,7 @@ function send_file($id, $file_type) {
     }
     exit;
 }
+
 // Zip submissions to assignment $id and send it to user
 function download_assignments($id) {
     global $workPath, $course_code;
@@ -1760,11 +1835,13 @@ function download_assignments($id) {
         return false;
     }
 }
+
 // Create an index.html file for assignment $id listing user submissions
 // Set $online to TRUE to get an online view (on the web) - else the
 // index.html works for the zip file
 function create_zip_index($path, $id, $online = FALSE) {
     global $charset, $m;
+
     $fp = fopen($path, "w");
     if (!$fp) {
         die("Unable to create assignment index file - aborting");
@@ -1790,7 +1867,9 @@ function create_zip_index($path, $id, $online = FALSE) {
 				<th>' . $m['sub_date'] . '</th>
 				<th>' . $m['grade'] . '</th>
 			</tr>');
+
     $result = Database::get()->queryArray("SELECT a.uid, a.file_path, a.submission_date, a.grade, a.comments, a.grade_comments, a.group_id, b.deadline FROM assignment_submit a, assignment b WHERE a.assignment_id = ?d AND a.assignment_id = b.id ORDER BY a.id", $id);
+
     foreach ($result as $row) {
         $filename = basename($row->file_path);
         $filelink = empty($filename) ? '&nbsp;' :
@@ -1822,21 +1901,25 @@ function create_zip_index($path, $id, $online = FALSE) {
     fputs($fp, ' </table></body></html>');
     fclose($fp);
 }
+
 // Show a simple html page with grades and submissions
 function show_plain_view($id) {
     global $workPath, $charset;
+
     $secret = work_secret($id);
     create_zip_index("$secret/index.html", $id, TRUE);
     header("Content-Type: text/html; charset=$charset");
     readfile("$workPath/$secret/index.html");
     exit;
 }
+
 // Notify students by email about grade/comment submission
 // Send to single user for individual submissions or group members for group
 // submissions
 function grade_email_notify($assignment_id, $submission_id, $grade, $comments) {
     global $m, $currentCourseName, $urlServer, $course_code;
     static $title, $group;
+
     if (!isset($title)) {
         $res = Database::get()->querySingle("SELECT title, group_submissions FROM assignment WHERE id = ?d", $assignment_id);
         $title = $res->title;
@@ -1844,6 +1927,7 @@ function grade_email_notify($assignment_id, $submission_id, $grade, $comments) {
     }
     $info = Database::get()->querySingle("SELECT uid, group_id
                                          FROM assignment_submit WHERE id= ?d", $submission_id);
+
     $subject = sprintf($m['work_email_subject'], $title);
     $body = sprintf($m['work_email_message'], $title, $currentCourseName) . "\n\n";
     if ($grade != '') {
@@ -1859,6 +1943,7 @@ function grade_email_notify($assignment_id, $submission_id, $grade, $comments) {
         send_mail_to_group_id($info->group_id, $subject, $body);
     }
 }
+
 function send_mail_to_group_id($gid, $subject, $body) {
     global $charset;
     $res = Database::get()->queryArray("SELECT surname, givenname, email
@@ -1869,11 +1954,13 @@ function send_mail_to_group_id($gid, $subject, $body) {
         send_mail('', '', "$info->givenname $info->surname", $info->email, $subject, $body, $charset);
     }
 }
+
 function send_mail_to_user_id($uid, $subject, $body) {
     global $charset;
     $user = Database::get()->querySingle("SELECT surname, givenname, email FROM user WHERE id = ?d", $uid);
     send_mail('', '', "$user->givenname $user->surname", $user->email, $subject, $body, $charset);
 }
+
 // Return a list of users with no submissions for assignment $id
 function users_with_no_submissions($id) {
     global $course_id;
@@ -1898,6 +1985,7 @@ function users_with_no_submissions($id) {
     }
     return $users;
 }
+
 // Return a list of groups with no submissions for assignment $id
 function groups_with_no_submissions($id) {
     global $course_id;

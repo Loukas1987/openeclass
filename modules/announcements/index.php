@@ -344,6 +344,8 @@ if ($is_editor) {
         }
 
 
+
+
         // Facebook API call
 
 
@@ -372,6 +374,8 @@ $fields = array('message' => urlencode(strip_tags($_POST['newContent'])),'link' 
 		curl_close($ch);
        
     } // end of if $submit
+
+
 
 
     // teacher display
