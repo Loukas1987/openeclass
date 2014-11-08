@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 ﻿<?php
-=======
-<?php
->>>>>>> 06fbb2a212822cabc571338c202c79e40b791d6c
+
 /* ========================================================================
  * Open eClass 3.0
  * E-learning and Course Management System
@@ -571,9 +568,7 @@ $auto_judge_RUBY = $row->auto_judge_RUBY;
             $tool_content .= "<p class='success'>$msg2<br />$msg1<br /><a href='$_SERVER[SCRIPT_NAME]?course=$course_code&amp;id=$id'>$langBack</a></p><br />";
         } else {
             $tool_content .= "<p class='caution'>$langUploadError<br /><a href='$_SERVER[SCRIPT_NAME]?course=$course_code'>$langBack</a></p><br />";
-        }
-<<<<<<< HEAD
-		
+        }	
 		//inspired by ΕΛΛΑΚ 528
 
 		if($auto_judge){
@@ -585,7 +580,7 @@ $auto_judge_RUBY = $row->auto_judge_RUBY;
 		$extension=substr($file_name, $dot+1);
 		$valid_extensions=array("c", "cpp", "chh", "clj", "cs", "java", "js", "hs", "pl", "php", "py", "rb");	//valid extensions
 		$check_extension=in_array($extension, $valid_extensions);	//check if uploaded file is one of the valid extensions 
-		if (($check_extension==TRUE)&&($extension===$_POST['valid_extension']))
+		if (($check_extension==TRUE)&&($extension==$_POST['valid_extension']))
 		{
 		$pos_extension=array_search($extension, $valid_extensions);
 		}
