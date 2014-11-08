@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿<?php
+=======
+<?php
+>>>>>>> 06fbb2a212822cabc571338c202c79e40b791d6c
 /* ========================================================================
  * Open eClass 3.0
  * E-learning and Course Management System
